@@ -9,7 +9,11 @@ import textrank4zh
 import codecs
 
 stoplist = set('for a of the and to in'.split())
-
+dictionary = corpora.Dictionary(line.lower().split()[1:] for line in open("EnAbs3K.txt"))
+stop_ids = [dictionary.token2id[stopword] for stopword in stoplist if stopword in dictionary.token2id]
+once_ids = [tokenid for tokenid, docfreq in iteritems(dictionary.dfs) if docfreq == 1]
+dictionary.filter_tokens(stop_ids + once_ids)
+dictionary.compactify()
 
 class MyCorpus(object):
     def __iter__(self):
@@ -18,20 +22,17 @@ class MyCorpus(object):
             yield dictionary.doc2bow(line.lower().split())
 
 
-dictionary = corpora.Dictionary(line.lower().split()[1:] for line in open("EnAbs3K.txt"))
-stop_ids = [dictionary.token2id[stopword] for stopword in stoplist if stopword in dictionary.token2id]
-once_ids = [tokenid for tokenid, docfreq in iteritems(dictionary.dfs) if docfreq == 1]
 
-dictionary.filter_tokens(stop_ids + once_ids)
-dictionary.compactify()
 
 
 # corpus_memory_friendly = MyCorpus()
 #
 # corpora.MmCorpus.serialize("abc.mm", corpus_memory_friendly)
+def test():
+    corpus = corpora.MmCorpus("abc.mm")
+    lda = models.LdaModel(corpus=corpus, num_topics=100, id2word=dictionary)
+    pprint(lda.print_topics(20, 7))
 
-corpus = corpora.MmCorpus("abc.mm")
-tfidf = models.TfidfModel(corpus)
 
 # text = codecs.open("EnAbs3K.txt", "r", "utf-8").readline()
 # textrank = textrank4zh.TextRank4Keyword(stoplist)
@@ -40,19 +41,21 @@ tfidf = models.TfidfModel(corpus)
 #     print item.word, item.weight
 
 # vec = dictionary.doc2bow(text)
-vecs = MyCorpus()
+# vecs = MyCorpus()
 # vecs_tfidf = tfidf[vecs]
 # lsi = models.LsiModel(vecs_tfidf, id2word=dictionary, num_topics=10)
 # vecs_lsi = lsi[vecs_tfidf]
 # pprint(lsi.print_topics(10))
 
-lda = models.LdaModel(corpus, num_topics=100, id2word=dictionary)
-n = 0
-for vec in vecs:
-    doc_lda = lda[vec]
-    for id, w in doc_lda:
-        print dictionary[id],
-    print
-    n += 1
-    if n > 10:
-        break
+# n = 0
+# for vec in vecs:
+#     doc_lda = lda[vec]
+#     for id, w in doc_lda:
+#         print dictionary[id],
+#     print
+#     n += 1
+#     if n > 10:
+#         break
+
+if __name__ == "__main__":
+    test()

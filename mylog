@@ -3,3 +3,7 @@
 1.添加LDA代码，尝试用gensim串行版本的LDA进行主题聚类
 2.python yield关键字的用法，生成器，可以防止一次读入大量内存
 3.Market Matrix format是个啥
+
+2017.11.01 -----------------
+1.阅读gensim.Dictionary类、gensim.models.LdaModel类的源码
+2.需要学习logging模块的使用，找时间补上
