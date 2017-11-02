@@ -30,8 +30,11 @@ class MyCorpus(object):
 # corpora.MmCorpus.serialize("abc.mm", corpus_memory_friendly)
 def test():
     corpus = corpora.MmCorpus("abc.mm")
+    # lda = models.LdaModel(corpus=corpus, num_topics=100, id2word=dictionary)
     lda = models.LdaModel(corpus=corpus, num_topics=100, id2word=dictionary)
-    pprint(lda.print_topics(20, 7))
+    # pprint(lda.print_topics(10, 7))
+    print lda.get_topics()[0]
+    print lda.get_document_topics(corpus[0])
 
 
 # text = codecs.open("EnAbs3K.txt", "r", "utf-8").readline()
